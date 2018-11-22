@@ -2,17 +2,25 @@
   <div>
     <div class="container">
       <h2 class="title">
-        <img src="../assets/nasa-logo.png" alt="" width="120px">
+        <img src="../assets/nasa-logo.png" alt="" width="120">
         Image Gallery
       </h2>
       <div class="content">
         <h4 class="query">{{ query }}</h4>
         <transition-group tag="ul" mode="out-in">
           <li v-for="(item, index) in items" :key="index">
-            <img :src="item.links[0].href" alt="" width="200px" @mouseover="showInfo=true">
-            <div class="info" v-if="showInfo">
-              <p v-html="item.data[0].description"></p>
+            <img :src="item.links[0].href" alt="" width="200px">
+            <div class="imageTitle">
+              <small>{{ item.data[0].title }}</small>
             </div>
+            <div class="infoIcon" @mouseover="showInfo=true" @mouseleave="showInfo=false">
+              <img src="../assets/info.png" alt="" width="60">
+            </div>
+            <transition name="showInfo">
+              <div class="info" v-if="showInfo">
+                <p v-html="item.data[0].description"></p>
+              </div>
+            </transition>
           </li>
         </transition-group>
       </div>
@@ -28,6 +36,19 @@
     <div class="footer">
         WWPROJECT STUDIO &copy; 2018
     </div>
+    <!-- IMAGE MODAL -->
+    <div class="modal" v-if="showModal">
+      <div class="modalHeader">
+
+      </div>
+      <div class="modalContent">
+
+      </div>
+      <div class="modalFooter">
+
+      </div>
+    </div>
+
   </div>
 </template>
 
@@ -39,7 +60,8 @@ export default {
     return {
       query: '',
       items: '',
-      showInfo: false
+      showInfo: false,
+      showModal: false
     }
   },
   methods: {
@@ -112,19 +134,39 @@ export default {
     column-count: 4
     column-gap: 5px
     @include bp-mobile
-      column-count: 3
-    @include bp-mobileSM
       column-count: 2
+    @include bp-mobileSM
+      column-count: 1
     li
+      position: relative
+      margin-bottom: 5px
       img
         width: 100% !important
         height: auto
         transition: .4s
         &:hover
           opacity: 1
+      .infoIcon
+        position: absolute
+        z-index: 999
+        top: 0
+        right: 0
+        width: 30px
+        margin: 5px
+        cursor: pointer
+        img
+          width: 100%
+      .imageTitle
+        position: absolute
+        bottom: 0
+        width: 100%
+        background: rgba(#171717, 0.8)
+        padding: 5px
+        opacity: .75
+        transition: .4s
       .info
         position: fixed
-        z-index: 9999
+        z-index: 9995
         left: 0
         top: -200%
         width: 100%
@@ -137,11 +179,13 @@ export default {
           font-family: 'Roboto', sans-serif
           font-size: 20px
           font-weight: 300
-      img:hover ~ .info
+      .infoIcon:hover ~ .info
         top: 0
+      img:hover ~ .imageTitle
+        opacity: 1
 
 .content:hover img
-  opacity: .3
+  opacity: .5
 
 .footer
   height: 180px
@@ -150,9 +194,35 @@ export default {
   align-items: center
   color: #999
 
+.modal
+  position: fixed
+  z-index: 9999
+  top: 20px
+  left: 5%
+  width: 90%
+  height: 90vh
+  border-radius: 8px
+  background: rgba(#212121, 0.94)
+  .modalHeader
+    height: 40px
+    background: red
+    border-radius: 8px 8px 0 0
+  .modalFooter
+    position: absolute
+    bottom: 0
+    width: 100%
+    height: 40px
+    background: green
+    border-radius: 0 0 8px 8px
+
 .v-enter-active, .v-leave-active
   transition: all .5s
 .v-enter, .v-leave-to
   opacity: 0
   transform: translateY(30px)
+
+.showInfo-enter-active, .showInfo-leave-active
+  transition: transform .5s
+.showInfo-enter, .showInfo-leave-to
+  transform: translateY(-200%)
 </style>
